@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client - Gửi tin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-4">
+    <h3 class="text-success">🧑‍💻 Client - Gửi và nhận tin</h3>
+    <form id="sendForm">
+        <div class="mb-3">
+            <label for="message" class="form-label">Nhập tin nhắn hoặc lệnh gửi file (vd: sendfile hello.txt)</label>
+            <input type="text" id="message" class="form-control" placeholder="Tin nhắn...">
+        </div>
+        <button class="btn btn-primary" type="submit">Gửi</button>
+    </form>
+    <div class="mt-4">
+        <h5 class="text-info">📨 Phản hồi:</h5>
+        <div id="responses" class="border p-3 rounded bg-light" style="min-height: 100px;"></div>
+    </div>
+<script>
+    const form = document.getElementById("sendForm");
+    const message = document.getElementById("message");
+    const responses = document.getElementById("responses");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const res = await fetch("/send", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ message: message.value })
+        });
+        message.value = "";
+    });
+
+    async function fetchMessages() {
+        const res = await fetch("/messages");
+        const text = await res.text();
+        responses.innerHTML = text;
+    }
+
+    setInterval(fetchMessages, 1000);
+</script>
+</body>
+</html>

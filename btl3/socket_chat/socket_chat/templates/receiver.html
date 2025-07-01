@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receiver - Nhận tin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container mt-4">
+    <h3 class="text-danger">📥 Receiver - Nhận và gửi tin</h3>
+    <form id="replyForm">
+        <div class="mb-3">
+            <label for="reply" class="form-label">Nhập phản hồi hoặc gửi file (vd: sendfile test.txt)</label>
+            <input type="text" id="reply" class="form-control" placeholder="Phản hồi...">
+        </div>
+        <button class="btn btn-danger" type="submit">Gửi phản hồi</button>
+    </form>
+    <div class="mt-4">
+        <h5 class="text-success">📨 Tin nhắn đến:</h5>
+        <div id="received" class="border p-3 rounded bg-light" style="min-height: 100px;"></div>
+    </div>
+<script>
+    const form = document.getElementById("replyForm");
+    const reply = document.getElementById("reply");
+    const received = document.getElementById("received");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const res = await fetch("/reply", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ message: reply.value })
+        });
+        reply.value = "";
+    });
+
+    async function fetchIncoming() {
+        const res = await fetch("/incoming");
+        const text = await res.text();
+        received.innerHTML = text;
+    }
+
+    setInterval(fetchIncoming, 1000);
+</script>
+</body>
+</html>
